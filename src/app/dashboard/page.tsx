@@ -3,30 +3,26 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from "jwt-decode";
-import { getToken, logoutUser } from "@/lib/auth";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { getToken } from "@/lib/auth"; 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Home, LogOut, User, ShieldCheck, Sparkles } from "lucide-react"; 
 
-// Interface para sa Token Data
 interface JwtPayload {
-  sub: number; 
   username: string; 
   email: string;
-  role: string; 
-  exp: number; 
-  iat: number;
+  role: string;
 }
 
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState<JwtPayload | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true); // Para iwas Hydration Error
+    setIsMounted(true);
     const storedToken = getToken();
 
-    // Kung walang token, ibalik sa login
     if (!storedToken) {
       router.push("/login");
       return;
@@ -35,134 +31,132 @@ export default function Dashboard() {
     try {
       const decoded = jwtDecode<JwtPayload>(storedToken);
       setUser(decoded);
-      setToken(storedToken);
     } catch (e) {
-      console.error("Token decoding failed:", e);
-      logoutUser(); // Kung sira ang token, auto-logout
+      handleLogout();
     }
   }, [router]);
 
-  // Loading state habang inaantay ang client-side render
+  // --- MANUAL LOGOUT FUNCTION ---
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem("accessToken");
+    }
+    window.location.href = "/login"; 
+  };
+
   if (!isMounted || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="h-12 w-12 rounded-full bg-slate-800"></div>
-          <div className="h-4 w-32 bg-slate-800 rounded"></div>
-          <p className="text-slate-500 text-sm">Loading secure dashboard...</p>
+      <div className="fixed inset-0 flex items-center justify-center bg-slate-950 text-white z-50">
+        <div className="flex flex-col items-center gap-3">
+            <div className="h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm text-blue-200 font-medium tracking-wide animate-pulse">LOADING PROFILE...</p>
         </div>
       </div>
     );
   }
 
-  // Convert timestamps to readable dates
-  const loginTime = new Date(user.iat * 1000).toLocaleString();
-  const expiryTime = new Date(user.exp * 1000).toLocaleString();
-
   return (
-    <div className="min-h-screen w-full bg-[url('/home-bg.jpg')] bg-cover bg-center bg-fixed relative">
+    // 1. FULL SCREEN BACKGROUND (Fixed position)
+    <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-hidden">
       
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+      {/* Background Image Layer */}
+      <div className="absolute inset-0 bg-[url('/home-bg.jpg')] bg-cover bg-center opacity-60 scale-105"></div>
+      
+      {/* Dark Overlay Layer */}
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/80 to-slate-950/95 backdrop-blur-[2px]"></div>
 
-      <div className="relative z-10 p-6 md:p-10 max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Decorative Glows */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-purple-500/20 rounded-full blur-[120px] animate-pulse delay-1000"></div>
+
+      {/* 2. CENTERED CARD AREA */}
+      <div className="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
         
-        {/* HEADER SECTION (Wala nang Sign Out button dito) */}
-        <div className="border-b border-white/10 pb-6">
-            <h1 className="text-3xl font-bold text-white tracking-tight">
-              Dashboard
-            </h1>
-            <p className="text-slate-400 mt-1">
-              Welcome back, <span className="text-blue-400 font-semibold">{user.username}</span>. Here is your session overview.
-            </p>
-        </div>
-
-        {/* MAIN GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* LEFT: PROFILE CARD */}
-          <Card className="lg:col-span-1 bg-white/5 border-white/10 text-white backdrop-blur-md overflow-hidden shadow-2xl">
-            {/* Gradient Header sa Card */}
-            <div className="h-24 bg-gradient-to-r from-blue-600 to-purple-600 relative">
-               <div className="absolute -bottom-12 left-6">
-                  {/* Avatar Circle */}
-                  <div className="w-24 h-24 rounded-full border-4 border-slate-900 bg-slate-800 flex items-center justify-center text-4xl font-bold text-white shadow-xl">
-                    {user.username.charAt(0).toUpperCase()}
+        {/* MAIN CARD */}
+        <div className="relative z-10 w-full max-w-sm animate-in fade-in zoom-in duration-700">
+            
+            {/* Glass Card Container */}
+            <Card className="bg-black/30 border border-white/10 text-white backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden ring-1 ring-white/10">
+                
+                {/* Banner */}
+                <div className="h-36 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                </div>
+                
+                <CardContent className="px-8 pb-8 text-center relative">
+                  
+                  {/* Floating Avatar */}
+                  <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                      <div className="relative group cursor-default">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
+                        <div className="relative w-32 h-32 rounded-full border-4 border-slate-900 bg-slate-800 flex items-center justify-center text-5xl font-bold text-white shadow-2xl overflow-hidden">
+                            <span className="bg-gradient-to-br from-white to-slate-400 bg-clip-text text-transparent">
+                                {user.username.charAt(0).toUpperCase()}
+                            </span>
+                        </div>
+                        <div className="absolute bottom-2 right-2 w-6 h-6 bg-emerald-500 border-4 border-slate-900 rounded-full" title="Online"></div>
+                      </div>
                   </div>
-               </div>
-            </div>
-            
-            <CardContent className="pt-16 px-6 pb-6">
-              <h2 className="text-2xl font-bold capitalize">{user.username}</h2>
-              <p className="text-slate-400 text-sm mb-4">{user.email || 'No email provided'}</p>
-              
-              <div className="flex flex-wrap gap-2 mb-6">
-                 <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-500/30">
-                    Role: {user.role || 'User'}
-                 </span>
-                 <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold border border-emerald-500/30">
-                    Status: Active
-                 </span>
-              </div>
 
-              <div className="space-y-3 pt-4 border-t border-white/10 text-sm">
-                <div className="flex justify-between">
-                    <span className="text-slate-500">User ID</span>
-                    <span className="font-mono text-slate-300">#{user.sub}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span className="text-slate-500">Access Level</span>
-                    <span className="text-slate-300">Full Access</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                  {/* User Details */}
+                  <div className="mt-20 space-y-1">
+                      <h2 className="text-3xl font-bold text-white tracking-tight flex items-center justify-center gap-2">
+                        {user.username} 
+                        <Sparkles size={16} className="text-yellow-400" fill="currentColor" />
+                      </h2>
+                      <p className="text-blue-200/80 font-medium text-sm">{user.email}</p>
+                      
+                      {/* Badges */}
+                      <div className="flex justify-center gap-2 mt-5">
+                         <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5 text-xs font-medium text-slate-300">
+                            <User size={12} className="text-blue-400" />
+                            {user.role || 'Member'}
+                         </div>
+                         <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 flex items-center gap-1.5 text-xs font-medium text-slate-300">
+                            <ShieldCheck size={12} className="text-emerald-400" />
+                            Verified
+                         </div>
+                      </div>
+                  </div>
 
-          {/* RIGHT: SESSION & TOKEN INFO */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Session Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Card className="bg-white/5 border-white/10 text-white hover:bg-white/10 transition-colors">
-                    <CardHeader className="pb-2">
-                        <CardDescription className="text-slate-400">Session Started</CardDescription>
-                        <CardTitle className="text-lg font-medium text-emerald-300">
-                            {loginTime}
-                        </CardTitle>
-                    </CardHeader>
-                </Card>
-                <Card className="bg-white/5 border-white/10 text-white hover:bg-white/10 transition-colors">
-                    <CardHeader className="pb-2">
-                        <CardDescription className="text-slate-400">Session Expires</CardDescription>
-                        <CardTitle className="text-lg font-medium text-amber-300">
-                            {expiryTime}
-                        </CardTitle>
-                    </CardHeader>
-                </Card>
-            </div>
+                  {/* Divider */}
+                  <div className="w-full flex items-center gap-4 my-8">
+                    <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-1"></div>
+                    <span className="text-xs text-slate-500 font-mono uppercase tracking-widest">Options</span>
+                    <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent flex-1"></div>
+                  </div>
 
-            {/* TOKEN TERMINAL */}
-            <Card className="bg-black/40 border-white/10 text-white overflow-hidden shadow-2xl">
-                <CardHeader className="bg-white/5 border-b border-white/5 py-3 px-6 flex flex-row items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                        <span className="ml-2 text-xs font-mono text-slate-400">auth_token.json</span>
-                    </div>
-                    <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Developer Mode</div>
-                </CardHeader>
-                <CardContent className="p-0">
-                    <div className="p-6 overflow-x-auto max-h-[200px] scrollbar-thin scrollbar-thumb-slate-700">
-                        <p className="text-xs text-slate-500 mb-2">// This is your encrypted JWT Access Token</p>
-                        <code className="font-mono text-xs text-blue-400 break-all leading-relaxed">
-                            {token}
-                        </code>
-                    </div>
+                  {/* BUTTONS */}
+                  <div className="flex flex-col gap-3">
+                      
+                      {/* Button 1: View Portfolio */}
+                      <Button 
+                        onClick={() => router.push('/')}
+                        className="w-full bg-white text-slate-950 hover:bg-blue-50 font-bold h-12 rounded-xl shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 group"
+                      >
+                        <Home size={18} className="group-hover:text-blue-600 transition-colors" />
+                        View My Portfolio
+                      </Button>
+
+                      {/* Button 2: Log Out */}
+                      <Button 
+                        variant="ghost" 
+                        onClick={handleLogout}
+                        className="w-full text-slate-400 hover:text-red-400 hover:bg-red-500/10 h-12 rounded-xl transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                      >
+                        <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
+                        Log Out
+                      </Button>
+
+                  </div>
+
                 </CardContent>
             </Card>
 
-          </div>
+            <p className="text-center text-slate-600 text-[10px] mt-8 tracking-widest uppercase opacity-60">
+                Secured by NestJS & Next.js
+            </p>
+
         </div>
       </div>
     </div>

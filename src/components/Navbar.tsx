@@ -1,18 +1,17 @@
-"use client"; // <--- 1. IMPORTANTE: Kailangan ito para gumana ang logic
+"use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // <--- 2. Import natin to
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
-  const pathname = usePathname(); // <--- 3. Alamin kung nasaan page tayo ngayon
+  const pathname = usePathname();
 
-  // LOGIC: Kung nasa login o register tayo, HUWAG ipakita ang Navbar
-  if (pathname === "/login" || pathname === "/register") {
+  // ITAGO ANG NAVBAR KAPAG NASA LOGIN, REGISTER, O DASHBOARD
+  if (pathname === "/login" || pathname === "/register" || pathname === "/dashboard") {
     return null;
   }
 
-  // Kung hindi login/register, ipakita ang normal na Navbar
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -23,7 +22,7 @@ export default function Navbar() {
         </Link>
 
         {/* LINKS */}
-        <div className="flex items-center gap-6 text-sm font-medium text-slate-600">
+        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
           <Link href="/about" className="hover:text-blue-600 transition-colors">About</Link>
           <Link href="/education" className="hover:text-blue-600 transition-colors">Education</Link>
@@ -35,12 +34,7 @@ export default function Navbar() {
             </Button>
           </Link>
 
-          {/* Login Button sa Navbar */}
-          <Link href="/login">
-            <Button size="sm" variant="outline" className="text-slate-600 border-slate-300 hover:bg-slate-100">
-              Login
-            </Button>
-          </Link>
+          {/* TINANGGAL NA ANG LOGIN BUTTON DITO */}
         </div>
 
       </div>

@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { API_BASE } from '@/lib/config';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,40 +23,42 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Siguraduhin na tama ang URL (pwedeng hardcoded kung walang API_BASE)
-      const url = API_BASE ? `${API_BASE}/register` : 'https://nestjs-jnff.onrender.com/auth/register';
-      
-      const res = await fetch(url, {
+      // 1. HARDCODED URL (Para sure na tatama sa Backend mo)
+      const res = await fetch('https://nestjs-jnff.onrender.com/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
       });
 
-      const data = await res.json();
-      
+      // 2. ERROR HANDLING (Kung 500 Error, baka Duplicate)
       if (!res.ok) {
-        setError(data.message || 'Register failed');
-        setLoading(false);
-        return;
+        // Subukang basahin ang error message mula sa server
+        try {
+            const data = await res.json();
+            throw new Error(data.message || 'Registration failed.');
+        } catch (jsonError) {
+            // Kung hindi JSON ang balik (gaya ng 500 crash), ito ang error:
+            throw new Error('Username or Email might already be taken.');
+        }
       }
 
       alert("Registration successful! Please login.");
       router.push('/login');
       
-    } catch (err) {
-      setError('Connection failed. Please try again.');
+    } catch (err: any) {
+      setError(err.message || 'Connection failed.');
+    } finally {
       setLoading(false);
     }
   }
 
   return (
-    // 1. BACKGROUND IMAGE (Palitan mo filename kung iba image mo)
     <div className="min-h-screen w-full flex items-center justify-center px-4 relative bg-[url('/contact-bg.jpg')] bg-cover bg-center">
       
-      {/* 2. DARK OVERLAY */}
+      {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
 
-      {/* 3. GLASS CARD */}
+      {/* Glass Card */}
       <Card className="relative z-10 w-full max-w-md bg-white/10 backdrop-blur-md border-white/10 text-white shadow-2xl animate-in fade-in zoom-in duration-500">
         
         <CardHeader className="text-center space-y-2">
@@ -72,12 +73,11 @@ export default function RegisterPage() {
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-5">
             
-            {/* Username Input */}
             <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
                 <Input 
                     id="username"
-                    placeholder="Choose a username" 
+                    placeholder="Choose a unique username" 
                     className="bg-black/20 border-white/10 text-white placeholder:text-slate-500 focus:border-purple-500"
                     value={username} 
                     onChange={(e) => setUsername(e.target.value)} 
@@ -85,7 +85,6 @@ export default function RegisterPage() {
                 />
             </div>
             
-            {/* Email Input */}
             <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input 
@@ -99,7 +98,6 @@ export default function RegisterPage() {
                 />
             </div>
 
-            {/* Password Input */}
             <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input 
@@ -114,7 +112,7 @@ export default function RegisterPage() {
             </div>
             
             {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded text-red-300 text-sm text-center">
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded text-red-300 text-sm text-center font-medium">
                     {error}
                 </div>
             )}
@@ -141,9 +139,6 @@ export default function RegisterPage() {
         </CardContent>
 
       </Card>
-
-      {/* TANGGAL NA ANG BACK TO PORTFOLIO LINK DITO */}
-
     </div>
   );
 }

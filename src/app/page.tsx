@@ -1,61 +1,75 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { User, GraduationCap, Gamepad2, Mail, LayoutDashboard, LogIn } from "lucide-react"; 
+import { useEffect, useState } from "react";
+import { getToken } from "@/lib/auth";
 
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check kung may token (Naka-login ba?)
+  useEffect(() => {
+    setIsLoggedIn(!!getToken());
+  }, []);
+
   return (
-    <main className="min-h-screen w-full flex items-center justify-center p-4 relative bg-[url('/home-bg.jpg')] bg-cover bg-center bg-no-repeat bg-fixed">
+    // 1. FULL SCREEN FIXED BACKGROUND
+    <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-hidden">
+      
+      {/* Background Image */}
+      <div className="absolute inset-0 bg-[url('/home-bg.jpg')] bg-cover bg-center opacity-50 scale-105"></div>
       
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-[3px]"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/70 to-slate-950"></div>
 
-      <div className="relative z-10 flex flex-col items-center text-center space-y-8 max-w-3xl px-4 animate-in fade-in zoom-in duration-1000">
+      {/* Decorative Glows */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse delay-1000"></div>
+
+      {/* 2. MAIN CONTENT (Centered) */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 space-y-8 animate-in fade-in zoom-in duration-1000">
         
-        {/* PROFILE PICTURE */}
-        <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+        {/* Profile Picture */}
+        <div className="relative mb-4 group cursor-pointer">
+          <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
           <img 
             src="/profile.jpg" 
             alt="Lance Trespeces" 
-            className="relative w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-slate-900 shadow-2xl"
+            className="relative w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-slate-900 shadow-2xl"
           />
         </div>
 
         {/* HEADLINES */}
-        <div className="space-y-4">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-lg">
-            Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Lance</span>
+        <div className="space-y-4 max-w-3xl">
+          <h2 className="text-blue-400 font-semibold tracking-widest uppercase text-sm md:text-base">
+          </h2>
+          
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-2xl">
+            Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">Lance</span>
           </h1>
           
-          {/* --- DITO NATIN PINALITAN --- */}
-          <p className="text-xl md:text-2xl font-medium text-blue-200">
-            Aspiring Web Developer & UI/UX Enthusiast
+          <p className="text-xl md:text-2xl text-slate-300 font-light">
+            Aspiring <span className="text-white font-medium">Web Developer</span> & <span className="text-white font-medium">IT Student</span>
           </p>
-          {/* --------------------------- */}
           
-          <p className="text-lg text-slate-300 max-w-xl mx-auto leading-relaxed">
-            "Technology is the future, and I am here to build it." <br/>
-            Welcome to my personal space where I showcase my journey, skills, and passion.
+          <p className="text-base md:text-lg text-slate-400 max-w-lg mx-auto leading-relaxed pt-2">
+            Building modern, accessible, and secure web applications. 
+            Turning complex problems into simple, beautiful designs.
           </p>
         </div>
 
-        {/* ACTION BUTTONS */}
-        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center pt-4">
-          
-          <Link href="/contact">
-            <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-900/20 transition-all hover:scale-105">
-              Let's Talk 🚀
-            </Button>
-          </Link>
+        {/* NOTE: Removed redundant navigation buttons here as requested since you have a top navbar */}
 
-          <Link href="/about">
-            <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg px-8 py-6 rounded-full bg-transparent border-2 border-white text-white hover:bg-white hover:text-slate-900 transition-all hover:scale-105">
-              More About Me
-            </Button>
-          </Link>
-        
+        {/* Footer */}
+        <div className="absolute bottom-10 flex gap-6 opacity-60">
+           <div className="text-slate-400 text-sm tracking-widest uppercase">
+              • • • • • • • • • • • 
+           </div>
         </div>
 
       </div>
-    </main>
+    </div>
   );
 }
