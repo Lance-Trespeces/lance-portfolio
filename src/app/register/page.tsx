@@ -25,7 +25,7 @@ export default function RegisterPage() {
 
     try {
       // 1. HARDCODED URL (Para sure na tatama sa Backend mo)
-      const res = await fetch(`${API_BASE}auth/register`,
+      const res = await fetch(`${API_BASE}/auth/register`,
         {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
