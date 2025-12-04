@@ -3,13 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // ITAGO ANG NAVBAR KAPAG NASA LOGIN, REGISTER, O DASHBOARD
   if (pathname === "/login" || pathname === "/register" || pathname === "/dashboard") {
     return null;
+  }
+
+  if (!isMounted) {
+    return null; // Iwas hydration mismatch
   }
 
   return (
@@ -33,8 +43,6 @@ export default function Navbar() {
               Contact Me
             </Button>
           </Link>
-
-          {/* TINANGGAL NA ANG LOGIN BUTTON DITO */}
         </div>
 
       </div>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {API_BASE} from '@/lib/config';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -24,7 +25,8 @@ export default function RegisterPage() {
 
     try {
       // 1. HARDCODED URL (Para sure na tatama sa Backend mo)
-      const res = await fetch('https://nestjs-jnff.onrender.com/auth/register', {
+      const res = await fetch(`${API_BASE}auth/register`,
+        {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),

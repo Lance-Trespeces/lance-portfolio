@@ -11,6 +11,7 @@ import { API_BASE } from '@/lib/config';
 import { LogIn, ArrowLeft } from "lucide-react"; 
 import Link from 'next/link';
 
+
 export default function LoginPage() {
   const router = useRouter();
   
@@ -34,9 +35,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const url = API_BASE ? `${API_BASE}/login` : 'https://nestjs-jnff.onrender.com/auth/login';
-
-      const res = await fetch(url, {
+      
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
