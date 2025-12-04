@@ -121,15 +121,4 @@
   }
 }
 
-body {
-  background: linear-gradient(135deg, #4f46e5, #06b6d4, #10b981);
-  background-size: 300% 300%;
-  animation: gradientFlow 12s ease infinite;
-}
-
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
 
