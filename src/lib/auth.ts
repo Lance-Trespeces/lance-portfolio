@@ -15,7 +15,7 @@ export function getToken(): string | null {
 
     return null;
 }
-
+    
 export function logoutUser() {
 
     if (typeof window !== 'undefined') localStorage.removeItem(TOKEN_KEY);

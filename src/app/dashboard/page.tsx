@@ -13,7 +13,7 @@ import { LogOut, Plus, Pencil, Trash2, Search, X, Save, Briefcase } from "lucide
 interface JwtPayload {
   username: string; 
   email: string;
-  role: string;
+  role: string; 
 }
 
 interface Position {
@@ -128,14 +128,14 @@ export default function Dashboard() {
         setIsModalOpen(false);
         if(token) fetchItems(token); // Refresh list
     } catch (error) {
-        alert("Nabigo ang operasyon. Pakisuyong suriin ang iyong input o koneksyon.");
+        alert("The operation failed. Please check your input or connection.");
     }
   };
 
   // 3. DELETE
   const handleDelete = async (id?: number) => {
     if(!id) return;
-    if(!confirm("Sigurado ka bang nais mong tanggalin ang posisyong ito?")) return;
+    if(!confirm("Are you sure you want to delete this position?")) return;
 
     const token = getToken();
     try {
@@ -148,7 +148,7 @@ export default function Dashboard() {
 ``
         if(token) fetchItems(token); // Refresh List
     } catch (error) {
-        alert("Nabigong magtanggal");
+        alert("Failed to delete");
     }
   };
 
@@ -184,7 +184,7 @@ export default function Dashboard() {
   if (!isMounted || !user) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-slate-950 text-white z-50">
-        <p className="animate-pulse">Naglo-load ang Dashboard...</p>
+        <p className="animate-pulse">Loading Dashboard...</p>
       </div>
     );
   }
@@ -209,7 +209,7 @@ export default function Dashboard() {
             <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                 Hello, <span className="text-blue-400 capitalize">{user.username}</span>!
             </h1>
-            <p className="text-slate-400 text-sm">Pamahalaan ang iyong mga posisyon nang maayos.</p>
+            <p className="text-slate-400 text-sm">Manage your positions efficiently.</p>
         </div>
     </div>
 
@@ -227,7 +227,7 @@ export default function Dashboard() {
             onClick={handleLogout}
             className="shadow-lg hover:shadow-red-500/20 w-full md:w-auto"
         >
-            <LogOut size={18} className="mr-2" /> Mag-logout
+            <LogOut size={18} className="mr-2" /> Logout
         </Button>
     </div>
 </div>
@@ -236,14 +236,14 @@ export default function Dashboard() {
             <div className="relative w-full md:w-96">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <Input 
-                    placeholder="Maghanap ng mga posisyon..." 
+                    placeholder="Search for Company Positions..." 
                     className="pl-10 bg-white/5 border-white/10 text-white focus:border-blue-500 h-11 rounded-xl"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
             <Button onClick={openAddModal} className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:scale-105 h-11">
-                <Plus size={18} className="mr-2" /> Magdagdag ng Bagong Posisyon
+                <Plus size={18} className="mr-2" /> Add New Position
             </Button>
         </div>
 
@@ -252,13 +252,13 @@ export default function Dashboard() {
             {loading ? (
                 <div className="text-center text-slate-500 mt-20 flex flex-col items-center">
                     <div className="h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                    Naglo-load ng data...
+                    Loading data...
                 </div>
             ) : filteredItems.length === 0 ? (
                 <div className="text-center py-20 border-2 border-dashed border-white/10 rounded-2xl bg-white/5 flex flex-col items-center">
                     <Briefcase size={48} className="text-slate-600 mb-4" />
-                    <p className="text-slate-400 text-lg">Walang natagpuang mga posisyon.</p>
-                    <p className="text-slate-600 text-sm">I-click ang "Magdagdag ng Bagong Posisyon" para gumawa ng isa.</p>
+                    <p className="text-slate-400 text-lg">No positions found.</p>
+                    <p className="text-slate-600 text-sm">I-click ang "Add New Position" to create one.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -277,10 +277,10 @@ export default function Dashboard() {
                                 </p>
                                 <div className="flex justify-end gap-2 border-t border-white/10 pt-4">
                                     <Button size="sm" variant="outline" onClick={() => openEditModal(item)} className="h-8 border-white/20 text-blue-300 hover:bg-blue-500/20 hover:text-blue-200">
-                                        <Pencil size={14} className="mr-1" /> I-edit
+                                        <Pencil size={14} className="mr-1" /> Edit
                                     </Button>
                                     <Button size="sm" variant="outline" onClick={() => handleDelete(getId(item))} className="h-8 border-white/20 text-red-400 hover:bg-red-500/20 hover:text-red-200">
-                                        <Trash2 size={14} className="mr-1" /> Tanggalin
+                                        <Trash2 size={14} className="mr-1" /> Delete
                                     </Button>
                                 </div>
                             </CardContent>
@@ -301,7 +301,7 @@ export default function Dashboard() {
                 <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
                         {isEditing ? <Pencil size={20} className="text-yellow-400" /> : <Plus size={20} className="text-blue-400" />}
-                        {isEditing ? "I-edit ang Posisyon" : "Magdagdag ng Bagong Posisyon"}
+                        {isEditing ? "I-edit ang Posisyon" : "Add New Position"}
                     </h2>
                     <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white transition-colors">
                         <X size={20} />
@@ -311,33 +311,33 @@ export default function Dashboard() {
                 {/* Modal Form */}
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-300">Code ng Posisyon</label>
+                        <label className="text-sm font-medium text-slate-300">Position Code</label>
                         <Input 
                             value={formData.position_code} 
                             onChange={(e) => setFormData({...formData, position_code: e.target.value})}
                             className="bg-black/40 border-white/10 text-white focus:border-blue-500 h-11 rounded-lg font-mono"
-                            placeholder="hal. IT-001"
+                            placeholder="ex. PRES"
                             required
                         />
                     </div>
                     
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-300">Pangalan ng Posisyon</label>
+                        <label className="text-sm font-medium text-slate-300">Name of Position</label>
                         <Input 
                             value={formData.position_name} 
                             onChange={(e) => setFormData({...formData, position_name: e.target.value})}
                             className="bg-black/40 border-white/10 text-white focus:border-blue-500 h-11 rounded-lg"
-                            placeholder="hal. Software Engineer"
+                            placeholder="ex. President"
                             required
                         />
                     </div>
 
                     <div className="pt-4 flex justify-end gap-3 border-t border-white/10 mt-6">
                         <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white hover:bg-white/5">
-                            Kanselahin
+                            Cancel
                         </Button>
                         <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white gap-2 shadow-lg">
-                            <Save size={16} /> {isEditing ? "I-update" : "Lumikha"}
+                            <Save size={16} /> {isEditing ? "Update" : "Create"}
                         </Button>
                     </div>
                 </form>
